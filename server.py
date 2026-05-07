@@ -305,17 +305,18 @@ async def upload_image(file: UploadFile = File(...)):
     if len(data) > 50 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File size must be under 50MB")
 
-    try:
-        result = cloudinary.uploader.upload(
-            data,
-            folder="nri-realtor/properties",
-            resource_type="auto"
-        )
-           return result.get("secure_url")
+   try:
+    result = cloudinary.uploader.upload(
+        data,
+        folder="nri-realtor/properties",
+        resource_type="auto"
+    )
 
-    except Exception as e:
-        logging.error(f"Cloudinary upload error: {e}")
-        raise HTTPException(status_code=500, detail="Upload failed")
+    return result.get("secure_url")
+
+except Exception as e:
+    logging.error(f"Cloudinary upload error: {e}")
+    raise HTTPException(status_code=500, detail="Upload failed")
 @api_router.get("/files/{path:path}")
 async def serve_file(path: str):
     record = await db.files.find_one({"storage_path": path, "is_deleted": False}, {"_id": 0})
