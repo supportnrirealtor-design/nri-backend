@@ -1,3 +1,4 @@
+import certifi
 from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Form
 from fastapi.responses import Response
 from dotenv import load_dotenv
