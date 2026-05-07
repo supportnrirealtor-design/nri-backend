@@ -1,6 +1,3 @@
-# FULL CORRECTED SERVER.PY
-
-```python
 import cloudinary
 import cloudinary.uploader
 import certifi
@@ -496,5 +493,3 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
-
-Then Render → Manual Deploy → Clear build cache & deploy
