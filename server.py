@@ -1,3 +1,5 @@
+import cloudinary
+import cloudinary.uploader
 import certifi
 from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Form
 from fastapi.responses import Response
@@ -284,26 +286,34 @@ async def get_enquiries():
 # Image Upload
 @api_router.post("/upload")
 async def upload_image(file: UploadFile = File(...)):
-    allowed = {"image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf", "video/mp4", "video/webm", "video/quicktime"}
+    allowed = {
+        "image/jpeg", "image/png", "image/webp", "image/gif",
+        "application/pdf", "video/mp4", "video/webm", "video/quicktime"
+    }
+
     if file.content_type not in allowed:
         raise HTTPException(status_code=400, detail="File type not allowed")
-    ext = file.filename.split(".")[-1] if "." in file.filename else "png"
-    path = f"{APP_NAME}/properties/{uuid.uuid4()}.{ext}"
+
     data = await file.read()
+
     if len(data) > 50 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File size must be under 50MB")
-    result = put_object(path, data, file.content_type or "image/jpeg")
-    await db.files.insert_one({
-        "id": str(uuid.uuid4()),
-        "storage_path": result["path"],
-        "original_filename": file.filename,
-        "content_type": file.content_type,
-        "size": result.get("size", len(data)),
-        "is_deleted": False,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    })
-    return {"path": result["path"], "url": f"/api/files/{result['path']}"}
 
+    try:
+        result = cloudinary.uploader.upload(
+            data,
+            folder="nri-realtor/properties",
+            resource_type="auto"
+        )
+
+        return {
+            "url": result.get("secure_url"),
+            "path": result.get("public_id")
+        }
+
+    except Exception as e:
+        logging.error(f"Cloudinary upload error: {e}")
+        raise HTTPException(status_code=500, detail="Upload failed")
 @api_router.get("/files/{path:path}")
 async def serve_file(path: str):
     record = await db.files.find_one({"storage_path": path, "is_deleted": False}, {"_id": 0})
