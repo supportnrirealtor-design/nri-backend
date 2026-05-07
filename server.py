@@ -25,7 +25,6 @@ client = AsyncIOMotorClient(
     tlsCAFile=certifi.where(),
     serverSelectionTimeoutMS=30000
 )
-)
 db = client[db_name]
 
 # Object Storage
