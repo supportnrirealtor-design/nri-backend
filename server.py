@@ -344,6 +344,3 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
-git add .
-git commit -m "add cloudinary upload"
-git push
