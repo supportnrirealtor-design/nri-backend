@@ -1,3 +1,4 @@
+import certifi
 from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Form
 from fastapi.responses import Response
 from dotenv import load_dotenv
@@ -21,8 +22,9 @@ db_name = os.environ.get('DB_NAME', 'nri_realtor')
 client = AsyncIOMotorClient(
     mongo_url,
     tls=True,
-    tlsAllowInvalidCertificates=True,
+    tlsCAFile=certifi.where(),
     serverSelectionTimeoutMS=30000
+)
 )
 db = client[db_name]
 
