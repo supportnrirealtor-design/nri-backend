@@ -311,10 +311,7 @@ async def upload_image(file: UploadFile = File(...)):
             folder="nri-realtor/properties",
             resource_type="auto"
         )
-
-        return {
            return result.get("secure_url")
-        }
 
     except Exception as e:
         logging.error(f"Cloudinary upload error: {e}")
