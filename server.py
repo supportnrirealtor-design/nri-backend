@@ -313,8 +313,7 @@ async def upload_image(file: UploadFile = File(...)):
         )
 
         return {
-            "url": result.get("secure_url"),
-            "path": result.get("public_id")
+           return result.get("secure_url")
         }
 
     except Exception as e:
