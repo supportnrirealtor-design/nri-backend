@@ -22,7 +22,8 @@ db_name = os.environ.get('DB_NAME', 'nri_realtor')
 client = AsyncIOMotorClient(
     mongo_url,
     tls=True,
-    tlsCAFile=certifi.where(),
+    tlsAllowInvalidCertificates=True,
+    tlsAllowInvalidHostnames=True,
     serverSelectionTimeoutMS=30000
 )
 db = client[db_name]
